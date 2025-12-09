@@ -17,12 +17,12 @@ export class UsersService {
   private readonly saltRounds = 10;
   constructor(private readonly userRepository: UsersRepository) {}
 
-  async create(data: CreateUserDto): Promise<object | null> {
-    const { password } = data;
-    const exist = await this.userRepository.findOneByEmail(data.email);
+  async create(body: CreateUserDto): Promise<object | null> {
+    const { password } = body;
+    const exist = await this.userRepository.findOneByEmail(body.email);
     if (exist) {
       throw new ConflictException(
-        `El email ${data.email} ya existe, por favor ingresar uno diferente`,
+        `El email ${body.email} ya existe, por favor ingresar uno diferente`,
       );
     }
     let hashedPassword: string;
@@ -34,13 +34,13 @@ export class UsersService {
       throw new InternalServerErrorException('Failed to process password');
     }
 
-    const newUser = { ...data, password: hashedPassword };
+    const newUser = { ...body, password: hashedPassword };
 
     await this.userRepository.create(newUser);
     return {
       message: 'Usuario creado con exito',
-      name: data.name,
-      email: data.email,
+      name: body.name,
+      email: body.email,
       role: Role.CLIENT,
     };
     return null;
@@ -73,7 +73,7 @@ export class UsersService {
     return exist;
   }
 
-  async update(id: number, data: UpdateUserDto): Promise<Object | null> {
+  async update(id: number, body: UpdateUserDto): Promise<Object | null> {
     if (!id) {
       throw new BadRequestException(
         'El campo requerido (id) esta incompleto, por favor verifique e intente nuevamente',
@@ -87,9 +87,9 @@ export class UsersService {
     }
     let hashedPassword = existId.password;
     try {
-      if (data.password) {
+      if (body.password) {
         const salt = await bcrypt.genSalt();
-        hashedPassword = await bcrypt.hash(data.password, salt);
+        hashedPassword = await bcrypt.hash(body.password, salt);
       }
     } catch (err) {
       this.logger.error('Password hashing failed', err);
@@ -97,8 +97,8 @@ export class UsersService {
     }
 
     const updateUser = {
-      name: data.name ?? existId.name,
-      email: data.email ?? existId.email,
+      name: body.name ?? existId.name,
+      email: body.email ?? existId.email,
       password: hashedPassword,
     };
 
