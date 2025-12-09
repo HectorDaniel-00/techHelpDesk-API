@@ -1,10 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSourceConfig } from './config/typeOrm.config';
+import { envValidationSchema } from './config/validation.schema';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `${process.env.NODE_ENV}.env`,
+      validationSchema: envValidationSchema
+
+    }),
+    TypeOrmModule.forRoot({...DataSourceConfig})
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
