@@ -1,7 +1,7 @@
 import { PickType } from '@nestjs/mapped-types';
 import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
 import { RegisterAuthDto } from './register-auth.dto';
-import { Role } from 'src/constants/role.enum';
+import { Role } from 'src/common/enum/role.enum';
 
 export class PayloadAuthDto extends PickType(RegisterAuthDto, [
   'name',

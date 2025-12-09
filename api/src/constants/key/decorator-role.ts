@@ -1,1 +1,1 @@
-export const IS_ROLE_KEY = 'isROle';
+export const ROLE_KEY = 'roles';

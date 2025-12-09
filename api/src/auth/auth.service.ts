@@ -34,8 +34,6 @@ export class AuthService {
    * @throws InternalServerErrorException for unexpected failures.
    */
   async register(body: RegisterAuthDto): Promise<object> {
-    const { password } = body;
-
     // Prevent duplicate registrations.
     const existingUser = await this.usersRepo.findOneByEmail(body.email);
     if (existingUser) {
@@ -51,21 +49,23 @@ export class AuthService {
     let hashedPassword: string;
     try {
       const salt = await bcrypt.genSalt(this.saltRounds);
-      hashedPassword = await bcrypt.hash(password, salt);
+      hashedPassword = await bcrypt.hash(body.password, salt);
     } catch (err) {
       this.logger.error('Password hashing failed', err);
       throw new InternalServerErrorException('Failed to process password');
     }
 
     const newUser = {
-      ...body,
+      name: body.name,
+      email: body.email,
       password: hashedPassword,
     };
     await this.usersRepo.create(newUser);
 
+    const { password, ...rest } = newUser;
     return {
       message: 'User successfully registered.',
-      ...newUser,
+      ...rest,
     };
   }
 
