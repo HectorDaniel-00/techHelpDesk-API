@@ -1,98 +1,176 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 Backend API – User, Category, and Ticket Management
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a **API RESTful professional**, developed with **NestJS** and designed to manage Users, Categories, and Tickets under a secure system based on JWT and Roles.  
+It includes robust validations, modular architecture, automatic documentation with Swagger, and deployment via Docker.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+# 🧩 General Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- 🔐 Authentication based on **JWT**
+- 🛂 AAuthorization by **Roles** (Admin / User)
+- 🧑‍💼 Gestión completa de usuarios y categorías (solo Admin)
+- 🎫 Sistema de tickets con cambio de estado
+- 🧪 Pruebas unitarias con Jest (mínimo 40% cobertura)
+- 🐳 Despliegue con Docker y Docker Compose
+- 📘 Documentación con Swagger
+- 🧼 Principios SOLID + Arquitectura Modular
 
-## Project setup
+---
 
-```bash
-$ npm install
+# 👤 Roles del Sistema
+
+| Rol        | Descripción | Permisos |
+|------------|-------------|----------|
+| **admin**  | Administrador del sistema | CRUD de usuarios, CRUD de categorías, CRUD de tickets |
+| **user**   | Usuario estándar | Crear tickets, ver los suyos, cambiar estado limitado |
+
+El rol se asigna al momento de crear un usuario o mediante el modelo en base de datos.
+
+---
+
+# 🔐 Seguridad y Acceso
+
+La API utiliza:
+
+- **JWT Strategy**  
+- **Guards:**  
+  - `JwtAuthGuard` → Protege rutas privadas  
+  - `RolesGuard` → Valida rol del usuario  
+  - `AdminGuard` → Acceso exclusivo para administradores  
+
+Tokens se envían en el header:
+`Authorization: Bearer <token>`
+
+Este backend sigue convenciones profesionales para asegurar alta calidad y mantenibilidad del código:
+
+### ✔ Inyección de dependencias
+Todos los módulos internamente desacoplados mediante DI nativo de NestJS.
+
+### ✔ Principios SOLID
+La lógica de negocio se organiza respetando:
+- **S**ingle Responsibility  
+- **O**pen/Closed  
+- **L**iskov Substitution  
+- **I**nterface Segregation  
+- **D**ependency Inversion  
+
+Esto permite una API flexible, reutilizable y fácil de escalar.
+
+### ✔ Arquitectura Modular
+La estructura del proyecto está organizada por dominios:
+```
+src/
+├── auth/
+├── users/
+├── categories/
+├── tickets/
+├── common/
+│ ├── exceptions/
+│ ├── filters/
+│ ├── guards/
+│ └── dtos/
+└── main.ts
 ```
 
-## Compile and run the project
+---
+
+# 📚 Documentación con Swagger
+
+Al iniciar el proyecto, la documentación está disponible en:
+
+📄 **http://localhost:3000/docs**
+
+Incluye:
+- Endpoints organizados por módulos  
+- DTOs  
+- Roles requeridos  
+- Ejemplos de request/response  
+
+---
+
+# 🧭 Endpoints del Sistema
+
+## 🔐 Auth
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST   | `/auth/login`   | Inicia sesión y devuelve JWT |
+| POST   | `/auth/register` | Registra un nuevo usuario |
+
+---
+
+## 👤 Users (Solo Admin)
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET    | `/users`           | Obtener todos los usuarios |
+| GET    | `/users/:id`       | Obtener usuario por ID |
+| POST   | `/users`           | Crear usuario |
+| PUT    | `/users/:id`       | Actualizar usuario |
+| DELETE | `/users/:id`       | Eliminar usuario |
+
+**Requiere rol:** `admin`
+
+---
+
+## 🏷 Categories (Solo Admin)
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET    | `/categories`        | Listar categorías |
+| GET    | `/categories/:id`    | Obtener categoría |
+| POST   | `/categories`        | Crear categoría |
+| PUT    | `/categories/:id`    | Actualizar categoría |
+| DELETE | `/categories/:id`    | Eliminar categoría |
+
+**Requiere rol:** `admin`
+
+---
+
+## 🎫 Tickets
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET    | `/tickets`            | Listar tickets (Admin ve todos, User solo los suyos) |
+| GET    | `/tickets/:id`        | Ver un ticket |
+| POST   | `/tickets`            | Crear ticket |
+| PATCH  | `/tickets/:id/status` | Cambiar estado del ticket |
+| DELETE | `/tickets/:id`        | Eliminar ticket (Admin) |
+
+**Roles:**  
+- `admin`: CRUD total  
+- `user`: CRUD limitado (solo propios)
+
+---
+
+# 🐳 Docker: Cómo ejecutar el proyecto
+
+📌 **Levantar la API y la base de datos**
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+📌 Modo background
+docker compose up --build -d
 ```
-
-## Run tests
 
 ```bash
-# unit tests
-$ npm run test
+📌 Ver logs
+docker compose logs -f
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose up --build 
 ```
+---
 
-## Deployment
+# 📦 Entrar al Contenedor y Ejecutar Comandos
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Para entrar al contenedor NestJS:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker exec -it <nombre_del_contenedor> bash
 ```
+---
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# 🛠 Instalación Manual sin Docker
+```bash
+git clone https://github.com/HectorDaniel-00/techHelpDesk-API.git
+cd techHelpDesk-API
+cd api
+npm install
+npm run start:dev
+```
